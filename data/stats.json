@@ -1,0 +1,28 @@
+{
+  "dataset": "microsoft/cats_vs_dogs",
+  "source_files": [
+    "train-00000-of-00002.parquet",
+    "train-00001-of-00002.parquet"
+  ],
+  "rows_read": 23410,
+  "bad_rows": 1,
+  "images_used": 23409,
+  "counts": {
+    "train/cat": 9392,
+    "train/dog": 9335,
+    "test/cat": 2348,
+    "test/dog": 2334
+  },
+  "train_total": 18727,
+  "test_total": 4682,
+  "test_frac": 0.2,
+  "seed": 0,
+  "max_per_class": 0,
+  "labels": {
+    "0": "cat",
+    "1": "dog"
+  },
+  "preprocessing_for_models": "RGB, resize to 64x64 (bilinear), pixel / 255 -> [0,1]",
+  "split_fingerprint": "5deb0f27f6c5",
+  "seconds": 84.8
+}
