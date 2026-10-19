@@ -30,7 +30,7 @@ __pycache__/
 *.pt
 *.pth
 
-# Experiment outputs; keep selected formal NumPy artifacts in Git
+# Experiment outputs; keep selected formal artifacts in Git
 /results/*
 !/results/part2_numpy_results.json
 !/results/part2_numpy_loss.png
@@ -43,3 +43,13 @@ __pycache__/
 !/results/comparison.csv
 !/results/comparison.png
 !/results/summary.json
+!/results/part3_torch_cuda.json
+!/results/part3_torch_cuda_run.log
+!/results/part3_torch_cuda/
+/results/part3_torch_cuda/*
+!/results/part3_torch_cuda/loss.png
+!/results/part3_torch_cuda/epochs.csv
+!/results/part3_torch_cuda/experiment.md
+!/results/part3_torch_cuda/environment.json
+!/results/part3_torch_cuda/verification.json
+!/results/part3_torch_cuda/test_predictions.csv

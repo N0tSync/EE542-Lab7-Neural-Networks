@@ -1,0 +1,42 @@
+{
+  "conda_environment": "ee508",
+  "interpreter": "/home/n0tsync/miniconda3/envs/ee508/bin/python",
+  "python": "3.10.20",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "reused_existing_environment": true,
+  "packages_installed_or_upgraded": false,
+  "packages": {
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "numpy": "2.2.6",
+    "Pillow": "12.2.0",
+    "matplotlib": "3.10.9"
+  },
+  "package_metadata_versions": {
+    "torch": "2.11.0",
+    "torchvision": "0.26.0",
+    "numpy": "2.2.6",
+    "Pillow": "12.2.0",
+    "matplotlib": "3.10.9"
+  },
+  "cuda_runtime": "13.0",
+  "cudnn": 91900,
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "gpu_memory_bytes": 17094475776,
+  "compute_capability": [
+    12,
+    0
+  ],
+  "compiled_cuda_architectures": [
+    "sm_75",
+    "sm_80",
+    "sm_86",
+    "sm_90",
+    "sm_100",
+    "sm_120"
+  ],
+  "nvidia_smi_name_driver_memory_mib": "NVIDIA GeForce RTX 5080, 610.88, 16303",
+  "source_commit": "f5f78723311859a6a7e39c7bd789913729940fee",
+  "model_source_sha256": "16db2ba20e5ffbce70b51327af2601368a2e0a47b732a48b82cb8aa7417b55a3",
+  "gpu_execution": "Host execution; the restricted sandbox does not expose GPU devices"
+}

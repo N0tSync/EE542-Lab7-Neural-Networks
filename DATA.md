@@ -147,8 +147,12 @@ Companion artifacts are `part2_numpy_loss.png`, `part2_numpy_run.log`,
 they do not overwrite the default full-run result path. The selected full NumPy
 result, loss plot, run log, epoch CSV, prediction CSV, checkpoint, experiment
 report, and available comparison outputs are tracked through explicit
-`.gitignore` exceptions. Dataset files, validation runs, smoke runs, and other
-generated outputs remain local and ignored.
+`.gitignore` exceptions. The formal CUDA JSON, console log, loss plot, epoch CSV,
+experiment report, environment record, verification record, and verification
+predictions are also explicitly allowed. CUDA companion reports are under
+`results/part3_torch_cuda/`; its binary `model.pt` checkpoint remains local.
+Dataset files, validation runs, smoke runs, and other generated outputs remain
+local and ignored.
 
 Integration tools: `scripts/run_experiments.py` runs both models sequentially and
 saves logs. `scripts/check_results.py` validates model result schemas and split

@@ -88,8 +88,9 @@ reproduced predictions on nine test images across class and block boundaries.
 - `part2_numpy_test_predictions.csv`: all ordered test scores and predictions.
 - `part2_numpy_model.npz`: fixed convolution and trained FC checkpoint.
 
-No formal PyTorch result is present in this checkout. The comparison tool can
-produce the available NumPy baseline table and chart; GPU speedup requires a real
-GPU experiment on the same split with compatible settings. The two models have
-different architectures and trainable parameters, which must be stated when
-interpreting a later comparison.
+At the time of this NumPy experiment, no formal PyTorch result was available.
+A subsequent CUDA experiment is recorded in `part3_torch_cuda.json` and
+`part3_torch_cuda/experiment.md`. The existing comparison table and chart still
+contain the earlier NumPy baseline; final integration must include the CUDA run.
+The two models have different architectures and trainable parameters, which must
+be stated when interpreting the comparison.

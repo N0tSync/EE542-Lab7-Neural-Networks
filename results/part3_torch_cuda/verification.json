@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "source_code_unchanged": true,
+  "full_dataset": true,
+  "data_split_fingerprint": "5deb0f27f6c5",
+  "numpy_configuration_matches": true,
+  "part3_behavior_tests_passed": 5,
+  "cuda_forward_backward_probe_passed": true,
+  "smoke_validation": {
+    "n_train": 256,
+    "n_test": 128,
+    "epochs": 2,
+    "test_accuracy": 0.5,
+    "purpose": "Execution validation, not a full benchmark"
+  },
+  "checkpoint_reloaded": true,
+  "finite_parameters_and_optimizer_state": true,
+  "optimizer_updates_per_parameter": 2930,
+  "test_images_rechecked": 4682,
+  "test_correct_rechecked": 3684,
+  "test_accuracy_rechecked": 0.78684322938915,
+  "test_mse_rechecked": 0.16209932878562267,
+  "confusion_matrix": [
+    [
+      1952,
+      396
+    ],
+    [
+      602,
+      1732
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "cat",
+    "dog"
+  ],
+  "confusion_matrix_axes": "rows: actual; columns: predicted",
+  "partial_block_included": true,
+  "original_timing_values_preserved": true,
+  "notes": "Checkpoint verification is a separate untimed pass; formal JSON metrics and timings are unchanged"
+}

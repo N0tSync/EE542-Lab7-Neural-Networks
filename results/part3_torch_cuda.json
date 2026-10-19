@@ -1,0 +1,201 @@
+{
+  "model": "CatDogCNN",
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 5080",
+  "data_split_fingerprint": "5deb0f27f6c5",
+  "source_data_split_fingerprint": "5deb0f27f6c5",
+  "n_train": 18727,
+  "n_test": 4682,
+  "epochs": 10,
+  "seed": 3,
+  "image_size": [
+    64,
+    64
+  ],
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "optimizer": "Adam",
+  "loss": "MSELoss",
+  "output_activation": "ReLU",
+  "decision_threshold": 0.5,
+  "parameter_count": 529505,
+  "architecture": "3->Conv16(3x3,pad1)->ReLU->Pool2->Conv32(3x3,pad1)->ReLU->Pool2->Flatten8192->FC64->ReLU->FC1->ReLU",
+  "output_initialization": "weight normal(0,0.001), bias 0.5",
+  "preprocessing": "RGB, resize 64x64 bilinear, float32 / 255",
+  "load_seconds": 27.48428978299944,
+  "train_seconds": 5.64557391299968,
+  "train_images_per_sec": 33171.118275289264,
+  "epochs_log": [
+    {
+      "epoch": 1,
+      "loss": 0.2202027455762402,
+      "seconds": 0.8830793189999895,
+      "train_accuracy": 0.6358199391253271,
+      "output_active_fraction": 0.9969562663533935
+    },
+    {
+      "epoch": 2,
+      "loss": 0.18320720813364394,
+      "seconds": 0.5728247910001301,
+      "train_accuracy": 0.7247290009077803,
+      "output_active_fraction": 0.9741549634217974
+    },
+    {
+      "epoch": 3,
+      "loss": 0.1668851812389865,
+      "seconds": 0.5274737170002481,
+      "train_accuracy": 0.753297378117157,
+      "output_active_fraction": 0.945212794361083
+    },
+    {
+      "epoch": 4,
+      "loss": 0.149803550688845,
+      "seconds": 0.5457272220000959,
+      "train_accuracy": 0.7833609227318844,
+      "output_active_fraction": 0.9001975756928499
+    },
+    {
+      "epoch": 5,
+      "loss": 0.1345795634311422,
+      "seconds": 0.5195897829999012,
+      "train_accuracy": 0.8113419127463022,
+      "output_active_fraction": 0.8630853847386127
+    },
+    {
+      "epoch": 6,
+      "loss": 0.12285290007826268,
+      "seconds": 0.5486900169998989,
+      "train_accuracy": 0.8289101297591712,
+      "output_active_fraction": 0.8269343728306723
+    },
+    {
+      "epoch": 7,
+      "loss": 0.11025982236126315,
+      "seconds": 0.49520884199955617,
+      "train_accuracy": 0.8527794094088749,
+      "output_active_fraction": 0.7954290596464997
+    },
+    {
+      "epoch": 8,
+      "loss": 0.09820837258286833,
+      "seconds": 0.504152657999839,
+      "train_accuracy": 0.8697068403908795,
+      "output_active_fraction": 0.7688898382015272
+    },
+    {
+      "epoch": 9,
+      "loss": 0.08460569053246983,
+      "seconds": 0.5087392469995393,
+      "train_accuracy": 0.8941101083996369,
+      "output_active_fraction": 0.7384525017354622
+    },
+    {
+      "epoch": 10,
+      "loss": 0.07208424365137903,
+      "seconds": 0.5282647700005327,
+      "train_accuracy": 0.9140812730282479,
+      "output_active_fraction": 0.7128744593367865
+    }
+  ],
+  "test_accuracy": 0.78684322938915,
+  "test_correct": 3684,
+  "test_mse": 0.1620993283201313,
+  "test_seconds": 0.1588136249993113,
+  "test_images_per_sec": 29481.09773339853,
+  "test_compute_seconds": 0.03643935399759357,
+  "test_blocks": [
+    {
+      "block": 1,
+      "start_index": 0,
+      "n_images": 1000,
+      "correct": 816,
+      "accuracy": 0.816,
+      "mse": 0.12177278661727906,
+      "seconds": 0.05148250900037965,
+      "images_per_sec": 19424.072746583224,
+      "compute_seconds": 0.008017517997359391,
+      "predicted_dogs": 184
+    },
+    {
+      "block": 2,
+      "start_index": 1000,
+      "n_images": 1000,
+      "correct": 839,
+      "accuracy": 0.839,
+      "mse": 0.11150999450683594,
+      "seconds": 0.032494265000423184,
+      "images_per_sec": 30774.66131291096,
+      "compute_seconds": 0.00924169400059327,
+      "predicted_dogs": 161
+    },
+    {
+      "block": 3,
+      "start_index": 2000,
+      "n_images": 1000,
+      "correct": 790,
+      "accuracy": 0.79,
+      "mse": 0.17227910470962524,
+      "seconds": 0.028915323000546778,
+      "images_per_sec": 34583.739561930204,
+      "compute_seconds": 0.007600997002555232,
+      "predicted_dogs": 544
+    },
+    {
+      "block": 4,
+      "start_index": 3000,
+      "n_images": 1000,
+      "correct": 737,
+      "accuracy": 0.737,
+      "mse": 0.21203250217437744,
+      "seconds": 0.028247073999409622,
+      "images_per_sec": 35401.89684853378,
+      "compute_seconds": 0.007018127997980628,
+      "predicted_dogs": 737
+    },
+    {
+      "block": 5,
+      "start_index": 4000,
+      "n_images": 682,
+      "correct": 502,
+      "accuracy": 0.7360703812316716,
+      "mse": 0.20726490789844143,
+      "seconds": 0.017396428000211017,
+      "images_per_sec": 39203.450271039976,
+      "compute_seconds": 0.00456101699910505,
+      "predicted_dogs": 502
+    }
+  ],
+  "test_predicted_cats": 2554,
+  "test_predicted_dogs": 2128,
+  "config": {
+    "data_dir": "data",
+    "device": "cuda",
+    "epochs": 10,
+    "lr": 0.001,
+    "batch_size": 64,
+    "test_block_size": 1000,
+    "seed": 3,
+    "num_workers": 0,
+    "cpu_threads": 4,
+    "max_train_per_class": 0,
+    "max_test_per_class": 0,
+    "output": "results/part3_torch_cuda.json"
+  },
+  "timing_notes": {
+    "train": "Wall time across all epochs: batching, H2D, forward, backward, Adam, metrics and epoch logging; excludes disk decoding, optimizer setup and warmup.",
+    "test": "Batching, H2D, inference, metrics and synchronization; excludes disk decoding and warmup.",
+    "test_compute": "Forward-only wall time with synchronization; excludes transfers and metrics."
+  },
+  "environment": {
+    "python": "3.10.20",
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "numpy": "2.2.6",
+    "cuda_runtime": "13.0",
+    "cudnn": 91900,
+    "cpu_model": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "cpu_threads": 4,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  },
+  "checkpoint": "results/part3_torch_cuda/model.pt"
+}

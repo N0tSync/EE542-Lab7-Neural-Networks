@@ -42,8 +42,9 @@ Use English for repository documentation, code comments, and command-line messag
 
 ## Environment
 
-Use Python 3.12 in a virtual environment or an equivalent Conda environment.
-For a project-local virtual environment:
+Parts I and II use Python 3.12 in a virtual environment or an equivalent Conda
+environment. The verified Part III CUDA environment uses Python 3.10; see its
+setup below. For a project-local environment for Parts I and II:
 
 ```bash
 python3 -m venv .venv
@@ -204,11 +205,25 @@ a real PyTorch GPU result with the same data split and compatible settings.
 
 ## Part III: PyTorch CNN
 
-Install the PyTorch dependencies and check CUDA availability:
+The existing `ee508` Conda environment provides a verified CUDA stack:
+Python 3.10.20, PyTorch 2.11.0+cu130, torchvision 0.26.0+cu130, NumPy 2.2.6,
+Pillow 12.2.0, and matplotlib 3.10.9. Activate it and check CUDA availability:
 
 ```bash
-python -m pip install -r requirements-part3.txt
+conda activate ee508
 python -c 'import torch; print(torch.__version__, torch.cuda.is_available())'
+```
+
+The verified device is an NVIDIA GeForce RTX 5080 with 16 GB of VRAM and driver
+610.88. This environment already contains all required packages; reusing it
+does not require installation or upgrades. `requirements-part3.txt` records
+the tested versions. To create a separate environment on another CUDA-capable
+machine:
+
+```bash
+conda create -n ee542-lab7-cuda python=3.10 pip
+conda activate ee542-lab7-cuda
+python -m pip install -r requirements-part3.txt
 ```
 
 The network uses two convolution layers with ReLU and max pooling, followed by
@@ -219,7 +234,7 @@ architectural difference when comparing it with the fixed-filter NumPy model.
 Start with a small real-image run:
 
 ```bash
-python src/part3_torch.py --device cuda --epochs 2 \
+python src/part3_torch.py --device cuda --epochs 2 --lr 0.001 --seed 3 \
   --max-train-per-class 128 --max-test-per-class 64 \
   --output results/part3_smoke_cuda.json
 ```
@@ -227,7 +242,8 @@ python src/part3_torch.py --device cuda --epochs 2 \
 Run the full GPU experiment:
 
 ```bash
-python src/part3_torch.py --device cuda --epochs 10 \
+python src/part3_torch.py --device cuda --epochs 10 --lr 0.001 --seed 3 \
+  --batch-size 64 --test-block-size 1000 \
   --output results/part3_torch_cuda.json
 ```
 
@@ -237,8 +253,26 @@ reflect the actual device; choose a CPU filename when overriding the output path
 for a CPU run. The script records total test time and
 model compute time, with CUDA synchronization around GPU measurements.
 It also saves a loss plot, epoch CSV, and checkpoint beside the result JSON.
-PyTorch runtime tests and formal GPU experiments have not been verified in
-this checkout.
+Run the Part III behavior tests in the same environment before a new experiment:
+
+```bash
+python -m unittest discover -s tests -p 'test_part3_torch.py' -v
+```
+
+The full CUDA run completed on all 18,727 training and 4,682 test images using
+the configuration above. Test accuracy was 78.68% (3,684 correct), training took
+5.646 seconds, total testing took 0.159 seconds, and forward-only testing took
+0.0364 seconds. Preload and warmup are excluded. All five behavior tests passed,
+and reloading the checkpoint reproduced the complete test-set correct counts.
+See the [result JSON](results/part3_torch_cuda.json),
+[run log](results/part3_torch_cuda_run.log),
+[loss plot](results/part3_torch_cuda/loss.png), and
+[experiment report](results/part3_torch_cuda/experiment.md).
+The report directory also contains environment provenance, verification details,
+epoch history, and verification predictions. Formal text and plot artifacts are
+allowed by `.gitignore`; the binary PyTorch checkpoint remains local.
+The existing comparison table and chart still contain the earlier NumPy baseline
+and need to be regenerated during final integration.
 
 ## Tests
 

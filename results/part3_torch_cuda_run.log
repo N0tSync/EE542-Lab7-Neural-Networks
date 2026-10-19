@@ -1,0 +1,20 @@
+Using device: cuda (NVIDIA GeForce RTX 5080)
+Preloading RGB 64x64 images: train=18727, test=4682, split=5deb0f27f6c5
+Batch shape: (64, 3, 64, 64); parameters: 529,505
+Epoch  1/10 | MSE 0.220203 | train accuracy 63.58% | 0.88s
+Epoch  2/10 | MSE 0.183207 | train accuracy 72.47% | 0.57s
+Epoch  3/10 | MSE 0.166885 | train accuracy 75.33% | 0.53s
+Epoch  4/10 | MSE 0.149804 | train accuracy 78.34% | 0.55s
+Epoch  5/10 | MSE 0.134580 | train accuracy 81.13% | 0.52s
+Epoch  6/10 | MSE 0.122853 | train accuracy 82.89% | 0.55s
+Epoch  7/10 | MSE 0.110260 | train accuracy 85.28% | 0.50s
+Epoch  8/10 | MSE 0.098208 | train accuracy 86.97% | 0.50s
+Epoch  9/10 | MSE 0.084606 | train accuracy 89.41% | 0.51s
+Epoch 10/10 | MSE 0.072084 | train accuracy 91.41% | 0.53s
+Test block 1: 1000 images, accuracy 81.60%, 0.051s
+Test block 2: 1000 images, accuracy 83.90%, 0.032s
+Test block 3: 1000 images, accuracy 79.00%, 0.029s
+Test block 4: 1000 images, accuracy 73.70%, 0.028s
+Test block 5: 682 images, accuracy 73.61%, 0.017s
+Test accuracy: 78.68%; test time: 0.159s; throughput: 29481.1 images/s
+Results: /home/n0tsync/Documents/EE542/Lab7/EE542-Lab7-Neural-Networks/results/part3_torch_cuda.json
