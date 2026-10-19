@@ -1,0 +1,211 @@
+{
+  "model": "NumPyCNN",
+  "device": "cpu",
+  "device_name": "AMD Ryzen 7 9800X3D 8-Core Processor",
+  "dataset": "microsoft/cats_vs_dogs",
+  "data_dir": "/home/n0tsync/Documents/EE542/Lab7/EE542-Lab7-Neural-Networks/data",
+  "data_split_fingerprint": "5deb0f27f6c5",
+  "source_data_split_fingerprint": "5deb0f27f6c5",
+  "run_type": "full_dataset",
+  "n_train": 18727,
+  "n_test": 4682,
+  "epochs": 10,
+  "lr": 0.001,
+  "seed": 3,
+  "data_seed": 3,
+  "image_size": [
+    64,
+    64
+  ],
+  "batch_size": 1,
+  "test_block_size": 1000,
+  "inference_batch_size": 64,
+  "max_train_per_class": 0,
+  "max_test_per_class": 0,
+  "train_seconds": 26.30950759499956,
+  "train_images_per_sec": 7117.9591379198955,
+  "load_seconds": 39.35147785499976,
+  "preloaded_image_bytes": 287649792,
+  "epochs_log": [
+    {
+      "epoch": 1,
+      "loss": 0.248825236082664,
+      "train_accuracy": 0.549046830779089,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.7328068219994748,
+      "images_per_sec": 6852.661464851832
+    },
+    {
+      "epoch": 2,
+      "loss": 0.24461878463952605,
+      "train_accuracy": 0.5613819618732312,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.5669424960005927,
+      "images_per_sec": 7295.449753618352
+    },
+    {
+      "epoch": 3,
+      "loss": 0.2435462963708226,
+      "train_accuracy": 0.5653868745661345,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.591516190999755,
+      "images_per_sec": 7226.271657124202
+    },
+    {
+      "epoch": 4,
+      "loss": 0.24270165327333784,
+      "train_accuracy": 0.570566561648956,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.6608558170000833,
+      "images_per_sec": 7037.961200435617
+    },
+    {
+      "epoch": 5,
+      "loss": 0.2417173797787573,
+      "train_accuracy": 0.5761734394190207,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.5620165609998367,
+      "images_per_sec": 7309.476560405885
+    },
+    {
+      "epoch": 6,
+      "loss": 0.24122781014244518,
+      "train_accuracy": 0.5724355209056442,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.5875036510005884,
+      "images_per_sec": 7237.477710517727
+    },
+    {
+      "epoch": 7,
+      "loss": 0.24047758999899593,
+      "train_accuracy": 0.5789501788861002,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.7114321059998474,
+      "images_per_sec": 6906.682250520292
+    },
+    {
+      "epoch": 8,
+      "loss": 0.24033229468178607,
+      "train_accuracy": 0.577775404496182,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.520152594999672,
+      "images_per_sec": 7430.899238862334
+    },
+    {
+      "epoch": 9,
+      "loss": 0.24008802701695175,
+      "train_accuracy": 0.579751161424681,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.6386032929995054,
+      "images_per_sec": 7097.31548114289
+    },
+    {
+      "epoch": 10,
+      "loss": 0.23937690405875975,
+      "train_accuracy": 0.5842900624766381,
+      "active_positive_fraction": 1.0,
+      "seconds": 2.736345414000425,
+      "images_per_sec": 6843.79972798167
+    }
+  ],
+  "test_seconds": 0.49337897499935934,
+  "test_compute_seconds": 0.44456567999714025,
+  "test_images_per_sec": 9489.662586465261,
+  "test_correct": 2540,
+  "test_accuracy": 0.5425032037590773,
+  "test_mse": 0.24904945142261825,
+  "test_predicted_dogs": 2858,
+  "test_predicted_cats": 1824,
+  "confusion_matrix": [
+    [
+      1015,
+      1333
+    ],
+    [
+      809,
+      1525
+    ]
+  ],
+  "test_blocks": [
+    {
+      "block": 1,
+      "start_index": 0,
+      "n_images": 1000,
+      "correct": 430,
+      "accuracy": 0.43,
+      "mse": 0.28040916895145485,
+      "seconds": 0.11926912200033257,
+      "compute_seconds": 0.09778470799938077,
+      "images_per_sec": 8384.399777816856
+    },
+    {
+      "block": 2,
+      "start_index": 1000,
+      "n_images": 1000,
+      "correct": 425,
+      "accuracy": 0.425,
+      "mse": 0.2795257231535729,
+      "seconds": 0.10468952199971682,
+      "compute_seconds": 0.09534350599824393,
+      "images_per_sec": 9552.054311631158
+    },
+    {
+      "block": 3,
+      "start_index": 2000,
+      "n_images": 1000,
+      "correct": 572,
+      "accuracy": 0.572,
+      "mse": 0.24115092649594597,
+      "seconds": 0.10136234600031457,
+      "compute_seconds": 0.09390779900058988,
+      "images_per_sec": 9865.596441472424
+    },
+    {
+      "block": 4,
+      "start_index": 3000,
+      "n_images": 1000,
+      "correct": 662,
+      "accuracy": 0.662,
+      "mse": 0.21690626399295915,
+      "seconds": 0.10005049100072938,
+      "compute_seconds": 0.0934619819990985,
+      "images_per_sec": 9994.953447981678
+    },
+    {
+      "block": 5,
+      "start_index": 4000,
+      "n_images": 682,
+      "correct": 451,
+      "accuracy": 0.6612903225806451,
+      "mse": 0.21709303367560975,
+      "seconds": 0.06798645700018824,
+      "compute_seconds": 0.06406768499982718,
+      "images_per_sec": 10031.40963792409
+    }
+  ],
+  "train_accuracy_definition": "Online accuracy before each SGD update",
+  "loss_definition": "Ordinary MSE; epoch values are online averages before SGD updates",
+  "timing_definition": "Preload excluded; normalization, model computation and metrics included",
+  "architecture": "64x64x3 -> fixed conv3 -> ReLU -> pool2 -> 961 -> FC1 -> ReLU",
+  "trainable_parameters": 962,
+  "frozen_parameters": 27,
+  "convolution_filter_fixed": true,
+  "numpy_version": "2.4.4",
+  "python_version": "3.12.13",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39 / Python 3.12.13",
+  "config": {
+    "epochs": 10,
+    "lr": 0.001,
+    "seed": 3,
+    "data_seed": 3,
+    "batch_size": 1,
+    "test_block_size": 1000,
+    "inference_batch_size": 64,
+    "max_train_per_class": 0,
+    "max_test_per_class": 0,
+    "trained_layers": "fully connected only",
+    "convolution": "NumPy vectorized einsum"
+  },
+  "checkpoint": "results/part2_numpy_model.npz"
+}

@@ -1,0 +1,23 @@
+NumPy CNN on CPU: AMD Ryzen 7 9800X3D 8-Core Processor
+Loaded 18727 train / 4682 test images in 39.351s; split=5deb0f27f6c5
+Image storage: 274.32 MiB, uint8; normalization is timed
+epochs=10 lr=0.001 seed=3 data_seed=3 test_block_size=1000 inference_batch_size=64
+epoch   1/10 online_mse=0.248825 online_accuracy=54.90% seconds=2.733
+epoch   2/10 online_mse=0.244619 online_accuracy=56.14% seconds=2.567
+epoch   3/10 online_mse=0.243546 online_accuracy=56.54% seconds=2.592
+epoch   4/10 online_mse=0.242702 online_accuracy=57.06% seconds=2.661
+epoch   5/10 online_mse=0.241717 online_accuracy=57.62% seconds=2.562
+epoch   6/10 online_mse=0.241228 online_accuracy=57.24% seconds=2.588
+epoch   7/10 online_mse=0.240478 online_accuracy=57.90% seconds=2.711
+epoch   8/10 online_mse=0.240332 online_accuracy=57.78% seconds=2.520
+epoch   9/10 online_mse=0.240088 online_accuracy=57.98% seconds=2.639
+epoch  10/10 online_mse=0.239377 online_accuracy=58.43% seconds=2.736
+Test block 1: 1000 images, accuracy=43.00%, seconds=0.1193
+Test block 2: 1000 images, accuracy=42.50%, seconds=0.1047
+Test block 3: 1000 images, accuracy=57.20%, seconds=0.1014
+Test block 4: 1000 images, accuracy=66.20%, seconds=0.1001
+Test block 5: 682 images, accuracy=66.13%, seconds=0.0680
+Training: 26.310s, 7118.0 images/s
+Testing: 0.493s, 9489.7 images/s, accuracy=54.25%
+Test predictions: cat=1824 dog=2858
+Results saved to results/part2_numpy_results.json

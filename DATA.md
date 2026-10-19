@@ -144,8 +144,11 @@ Training total time includes epoch logging; per-epoch timers exclude logging.
 Companion artifacts are `part2_numpy_loss.png`, `part2_numpy_run.log`,
 `part2_numpy_epochs.csv`, `part2_numpy_test_predictions.csv`, and
 `part2_numpy_model.npz`. Subset runs default to `results/part2_smoke/` so that
-they do not overwrite the default full-run result path. All outputs remain local
-and are ignored by Git.
+they do not overwrite the default full-run result path. The selected full NumPy
+result, loss plot, run log, epoch CSV, prediction CSV, checkpoint, experiment
+report, and available comparison outputs are tracked through explicit
+`.gitignore` exceptions. Dataset files, validation runs, smoke runs, and other
+generated outputs remain local and ignored.
 
 Integration tools: `scripts/run_experiments.py` runs both models sequentially and
 saves logs. `scripts/check_results.py` validates model result schemas and split

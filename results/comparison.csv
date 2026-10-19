@@ -1,0 +1,2 @@
+Model,Device,Train images,Epochs,Test images,Train time,Train img/s,Test time,Test ms/img,Train speed-up,Test speed-up,Test accuracy
+NumPyCNN,cpu (AMD Ryzen 7 9800X3D 8-Core Processor),18727,10,4682,26.31 s,"7,118",493.4 ms,0.105,1.0x,1.0x,54.25%

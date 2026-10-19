@@ -34,7 +34,7 @@ and a PyTorch CNN with CPU/GPU execution.
 │   └── test_results_pipeline.py
 ├── raw/                         # Local downloads; ignored by Git
 ├── data/                        # Local images and generated records; ignored
-└── results/                     # Local experiment outputs; ignored
+└── results/                     # Selected formal results; other outputs ignored
 ```
 
 Run the commands below from the repository root.
@@ -170,6 +170,17 @@ part2_numpy_epochs.csv
 part2_numpy_test_predictions.csv
 part2_numpy_model.npz
 ```
+
+The committed full run trained on 18,727 images for 10 epochs and tested on
+4,682 images. Test accuracy was 54.25%, with 26.31 seconds of training and
+0.493 seconds of testing, excluding data preload. See the
+[result JSON](results/part2_numpy_results.json),
+[loss plot](results/part2_numpy_loss.png),
+[run log](results/part2_numpy_run.log), and
+[experiment report](results/part2_numpy_experiment.md) for the configuration,
+timing definitions, verification, and limitations.
+These formal artifacts and the available comparison outputs are tracked;
+dataset files, smoke runs, and other generated outputs remain ignored.
 
 Images are preloaded as uint8 arrays before timing, using about 274 MiB for the
 full dataset. Normalization is performed per training image and per inference

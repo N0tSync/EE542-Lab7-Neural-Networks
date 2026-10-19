@@ -30,5 +30,16 @@ __pycache__/
 *.pt
 *.pth
 
-# Local experiment results (existing rule)
-/results/
+# Experiment outputs; keep selected formal NumPy artifacts in Git
+/results/*
+!/results/part2_numpy_results.json
+!/results/part2_numpy_loss.png
+!/results/part2_numpy_run.log
+!/results/part2_numpy_epochs.csv
+!/results/part2_numpy_test_predictions.csv
+!/results/part2_numpy_model.npz
+!/results/part2_numpy_experiment.md
+!/results/comparison.md
+!/results/comparison.csv
+!/results/comparison.png
+!/results/summary.json
