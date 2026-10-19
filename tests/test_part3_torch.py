@@ -1,6 +1,6 @@
 """Behavior checks for Part III, without downloading real cat/dog images.
 
-Run: python -m unittest -v test_part3_torch
+Run: python -m unittest discover -s tests -p 'test_part3_torch.py' -v
 The generated images are fixtures, not evidence of cat/dog classification accuracy.
 """
 
@@ -9,6 +9,7 @@ import contextlib
 import io
 import json
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 
@@ -17,6 +18,10 @@ import torch
 from torch import nn
 from torch.utils.data import TensorDataset
 
+# Support direct execution and unittest discovery from the repository root.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
 import prepare_data
 from src import part3_torch as part3
 

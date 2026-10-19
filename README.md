@@ -1,5 +1,29 @@
 # EE542-Lab7-Neural-Networks
 
+USC EE 542 Lab 7：NumPy MLP、NumPy CNN 与 PyTorch/GPU 实验。
+
+## 目录
+
+```text
+.
+├── README.md                  # 项目结构与运行入口
+├── DATA.md                    # 唯一的数据、预处理和结果格式说明
+├── src/
+│   ├── part1_mlp.py            # Part I：三个 NumPy MLP 示例
+│   └── part3_torch.py          # Part III：PyTorch CNN、训练及分块评估
+├── scripts/
+│   ├── prepare_data.py         # 下载、导出、检查及划分图片
+│   └── minipq.py               # prepare_data.py 的 Parquet 读取辅助模块
+├── tests/
+│   ├── test_prepare_data.py    # 数据准备流程测试
+│   └── test_part3_torch.py     # PyTorch 实现的行为测试
+├── data/                      # 图片、划分清单、统计与抽查图
+└── results/                   # 本地实验结果，Git 已忽略
+```
+
+Python 实现只维护一份：模型放在 `src/`，数据准备及实验运行脚本放在
+`scripts/`，测试放在 `tests/`。原始 Parquet 文件下载到 `raw/`。
+
 ## Python environment
 
 Use a project-local virtual environment for every install and run:
@@ -10,14 +34,42 @@ source .venv/bin/activate
 python -m pip install -r requirements-part1.txt
 ```
 
-## Part I: NumPy MLP examples
+## 运行
+
+以下命令在仓库根目录执行，并先激活 `.venv`。
 
 ```bash
+# Part I：运行全部三个示例
 python src/part1_mlp.py --output-dir results/part1
+
+# 数据准备测试：无需下载真实数据
+python tests/test_prepare_data.py
+
+# 下载并生成图片数据；下载功能还需要 huggingface_hub
+python scripts/prepare_data.py --download --raw raw --out data
+
+# 已有 Parquet 文件时
+python scripts/prepare_data.py --raw raw --out data
+
+# 可选：增加真实 Parquet 读取测试
+python tests/test_prepare_data.py --raw raw
 ```
 
-This saves CSV metrics, loss curves, a regression fit and classification decision
-regions. Classification metrics in Part I are training accuracy.
+数据准备要求输出目录为空；当前 `data/` 已有清单和统计，可以先使用
+`--out data_restored` 恢复到新目录。`--overwrite` 会删除并重建指定输出目录。
+当前仓库中的清单和统计不代表本地已包含全部图片。
+
+## 分工
+
+| 成员 | 负责内容 |
+|---|---|
+| A | Part II：NumPy CNN、训练与测试、计时和实验结果 |
+| B | Part III：PyTorch CNN、CPU/GPU 设备管理、计时和实验结果 |
+| C | 数据恢复、共享数据工具、实验运行与性能比较 |
+
+当前已有 Part I、数据准备及 PyTorch CNN 代码。Part III 尚待队友执行测试和正式实验；
+NumPy CNN、共享数据工具及实验运行/比较脚本尚待实现。数据约定与结果 JSON 字段见
+[DATA.md](DATA.md)。
 
 ## Part III (team member B): PyTorch CNN
 
@@ -30,13 +82,14 @@ below still need to be executed by the teammate responsible for verification.
 source .venv/bin/activate
 python -m pip install -r requirements-part3.txt
 python -c 'import torch; print(torch.__version__, torch.cuda.is_available())'
-python -m unittest -v test_part3_torch
+python -m unittest discover -s tests -p 'test_part3_torch.py' -v
 ```
 
 The tests use generated fixtures and require no downloaded dataset. For training,
 prepare `data/train/{cat,dog}`, `data/test/{cat,dog}`, `data/stats.json` and
 `data/split_manifest.csv` according to [DATA.md](DATA.md). The script rejects
 missing images or a mismatch between actual files and the recorded split.
+If the data was restored elsewhere, pass that directory with `--data-dir`.
 
 First verify the pipeline using a reproducible subset of the real images:
 

@@ -92,7 +92,7 @@ def load_image_datasets(data_dir):
     """Check the actual files against the preparation manifest before training."""
     if not all((data_dir / split / name).is_dir()
                for split in ("train", "test") for name in ("cat", "dog")):
-        raise ValueError(f"Missing {data_dir}/train|test/cat|dog images. Run prepare_data.py first.")
+        raise ValueError(f"Missing {data_dir}/train|test/cat|dog images. Run scripts/prepare_data.py first.")
     transform = transforms.Compose([
         transforms.Resize((64, 64), interpolation=InterpolationMode.BILINEAR),
         transforms.ToTensor(),

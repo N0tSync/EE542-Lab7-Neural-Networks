@@ -1,20 +1,29 @@
-# Data and Results Conventions (owned by B, followed by A and C)
+# Data and Results Conventions (owned by C, followed by A and B)
 
 ## 1. Data source
 
 - Hugging Face `microsoft/cats_vs_dogs`: 23,410 samples in a single `train` split
-- The download is two Parquet files in `data/` (about 722 MB). Each row has two columns:
+- The download is two Parquet files under `raw/` (about 722 MB). Each row has two columns:
   - `image`: the encoded image bytes
   - `labels`: `0` = cat, `1` = dog
 - The dataset has no test split, so we make our own train/test split (see section 3)
 
-## 2. Building the data (B runs this once, then shares `data/` with A and C)
+## 2. Building the data (C runs this once, then shares `data/` with A and B)
+
+Run commands from the repository root. Data preparation code lives in `scripts/`;
+`data/` contains images and generated records.
 
 ```bash
 pip install pillow matplotlib huggingface_hub   # pyarrow optional; minipq.py is used without it
-python prepare_data.py --download --raw raw --out data      # download + export + split
-# Parquet files already downloaded:  python prepare_data.py --raw raw --out data
+python scripts/prepare_data.py --download --raw raw --out data      # download + export + split
+# Parquet files already downloaded:  python scripts/prepare_data.py --raw raw --out data
+# Tests without real data:          python tests/test_prepare_data.py
+# Include real Parquet reading:     python tests/test_prepare_data.py --raw raw
 ```
+
+The output directory must be empty. If `data/` already contains records, use a new
+output directory such as `--out data_restored`, or explicitly rebuild it with
+`--overwrite` (which deletes and recreates the selected output directory).
 
 What the script does:
 
@@ -50,10 +59,11 @@ Image counts (actual run on 2026-10-16: 23,410 rows read, 23,409 images used, ab
 | Bad images skipped | 1 (`train-00000`, row 7223, only 4×4 pixels) |
 | Split fingerprint | `5deb0f27f6c5` |
 
-Checks: train and test do not overlap; every image is in the folder matching its label;
-all 12 images in `sample_check.png` match their labels.
+The saved manifest has no train/test filename overlap, and its labels agree with the
+class names. These records describe the earlier export; verify that the image files
+exist locally after restoring the data. `sample_check.png` is available for visual checks.
 
-## 4. Shared preprocessing rules (A and C must match)
+## 4. Shared preprocessing rules (A and B must match)
 
 | Item | Rule |
 |---|---|
@@ -64,16 +74,16 @@ all 12 images in `sample_check.png` match their labels.
 | Decision | Model output > 0.5 means dog |
 
 The bilinear rule is easy to get wrong: PIL's `resize()` defaults to bicubic, while
-torchvision's `Resize` defaults to bilinear. Both scripts now set bilinear explicitly:
+torchvision's `Resize` defaults to bilinear. Both model implementations must set bilinear explicitly:
 
 - A (NumPy): `Image.open(p).convert("RGB").resize((64, 64), Image.BILINEAR)`, then `/ 255.0`
-- C (PyTorch): `transforms.Resize((64, 64), interpolation=InterpolationMode.BILINEAR)` + `transforms.ToTensor()`
+- B (PyTorch): `transforms.Resize((64, 64), interpolation=InterpolationMode.BILINEAR)` + `transforms.ToTensor()`
   (`ImageFolder` sorts folder names alphabetically, which gives `cat = 0`, `dog = 1`)
 
 ## 5. Results format
 
 Each run writes its results to a JSON file in `results/` (A: `part2_numpy_results.json`,
-C: `part3_torch_cuda.json`). Required fields:
+B: `part3_torch_cuda.json`; CPU runs must use a CPU filename and device value). Required fields:
 
 | Field | Meaning |
 |---|---|
@@ -93,14 +103,15 @@ Timing rules:
   `test_compute_seconds`
 - On the GPU, call `torch.cuda.synchronize()` before and after timing, or the times come out too low
 
-After both models have run, B runs `python compare.py`. It checks that both runs have the same
-split fingerprint and produces the comparison table `results/comparison.md` and chart
-`results/comparison.png` for the report.
+Planned integration tools (not yet implemented): C will add `scripts/run_experiments.py`
+to run both models and save logs, and `scripts/compare.py` to check the split fingerprint
+and experiment settings and produce `results/comparison.md` and `results/comparison.png`
+for the report.
 
 ## 6. Keeping the comparison fair
 
 - Both models use the same `data/` folder (same fingerprint) and the same number of epochs
 - The NumPy version is slow (about 100 images/s; 10 epochs on the full set take about 35 minutes).
-  If A needs a subset, B builds one with `--max-per-class` (e.g. `data_small/`), and **both A and C
+  If A needs a subset, C builds one with `--max-per-class` (e.g. `data_small/`), and **both A and B
   use that same subset**
 - State the CPU and GPU models in the report
