@@ -21,12 +21,12 @@ Steps
 The images are saved at their original size. Resizing to 64x64 and dividing by 255 is done
 when the models load them (see DATA.md), so both models apply exactly the same rule.
 
-Usage
+Usage (from the repository root)
     pip install pillow matplotlib   (pyarrow optional - minipq.py is used without it;
                                      huggingface_hub needed only for --download)
-    python prepare_data.py --download --raw raw --out data
-    python prepare_data.py --raw raw --out data      # parquet files already in raw/
-    python prepare_data.py --raw raw --out data_small --max-per-class 2000   # smaller subset
+    python scripts/prepare_data.py --download --raw raw --out data
+    python scripts/prepare_data.py --raw raw --out data      # parquet files already in raw/
+    python scripts/prepare_data.py --raw raw --out data_small --max-per-class 2000
 Re-running with the same --seed gives the identical split (same fingerprint in stats.json).
 """
 import argparse

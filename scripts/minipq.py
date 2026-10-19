@@ -1,4 +1,5 @@
 """Minimal pure-Python Parquet reader (enough for HF image datasets written by pyarrow).
+Used by the neighboring prepare_data.py script when pyarrow is unavailable.
 Supports: Thrift compact footer, data page v1/v2, PLAIN + RLE_DICTIONARY/PLAIN_DICTIONARY,
 RLE/bit-packed definition levels, codecs UNCOMPRESSED and SNAPPY (pure-Python decoder)."""
 import struct

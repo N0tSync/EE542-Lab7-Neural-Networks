@@ -1,9 +1,9 @@
 """
 Quick tests for prepare_data.py and minipq.py (runs in a few seconds).
 
-Usage:
-    python3 test_prepare_data.py                     # tests 1-6 (no download needed)
-    python3 test_prepare_data.py --raw ../lab7/raw   # also test 7: read the real Parquet files
+Usage (from the repository root):
+    python tests/test_prepare_data.py             # tests 1-6 (no download needed)
+    python tests/test_prepare_data.py --raw raw   # also test 7: read the real Parquet files
 
 Each test prints PASS or FAIL. The last line says whether everything passed.
 """
@@ -12,6 +12,7 @@ import glob
 import io
 import json
 import os
+from pathlib import Path
 import shutil
 import sys
 import tempfile
@@ -19,7 +20,7 @@ import tempfile
 import numpy as np
 from PIL import Image
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import prepare_data as P  # noqa: E402
 
 RESULTS = []
