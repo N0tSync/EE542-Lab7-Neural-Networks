@@ -90,7 +90,7 @@ reproduced predictions on nine test images across class and block boundaries.
 
 At the time of this NumPy experiment, no formal PyTorch result was available.
 A subsequent CUDA experiment is recorded in `part3_torch_cuda.json` and
-`part3_torch_cuda/experiment.md`. The existing comparison table and chart still
-contain the earlier NumPy baseline; final integration must include the CUDA run.
+`part3_torch_cuda/experiment.md`. The final comparison table and chart now include
+both formal runs; see [comparison.md](comparison.md).
 The two models have different architectures and trainable parameters, which must
 be stated when interpreting the comparison.

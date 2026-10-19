@@ -85,8 +85,8 @@ The NumPy and CUDA runs match in full sample counts, split fingerprint, image si
 epochs, learning rate, and model/shuffle seed. They use different architectures,
 optimizers, precision, and training batch sizes; a later comparison must describe
 those differences rather than attribute the entire performance difference to CUDA.
-The existing comparison files still describe the earlier NumPy-only baseline;
-final comparison integration remains a separate step.
+The final comparison files now include both formal runs; see
+[comparison.md](../comparison.md) for the accuracy, throughput, and timing comparison.
 
 ## Artifacts
 
