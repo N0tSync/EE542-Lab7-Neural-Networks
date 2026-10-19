@@ -1,32 +1,42 @@
 # EE542-Lab7-Neural-Networks
 
-USC EE 542 Lab 7：NumPy MLP、NumPy CNN 与 PyTorch/GPU 实验。
+USC EE 542 Lab 7: NumPy multilayer perceptrons, a manually implemented NumPy CNN,
+and a PyTorch CNN with CPU/GPU execution.
 
-## 目录
+## Repository layout
 
 ```text
 .
-├── README.md                  # 项目结构与运行入口
-├── DATA.md                    # 唯一的数据、预处理和结果格式说明
+├── README.md
+├── DATA.md                      # Dataset, preprocessing, and result conventions
+├── requirements-part1.txt       # NumPy, plotting, and image dependencies
+├── requirements-part3.txt       # PyTorch and torchvision dependencies
 ├── src/
-│   ├── part1_mlp.py            # Part I：三个 NumPy MLP 示例
-│   └── part3_torch.py          # Part III：PyTorch CNN、训练及分块评估
+│   ├── part1_mlp.py              # Three MLP examples
+│   ├── part2_numpy_cnn.py        # CNN forward pass, MSE, and FC-only SGD
+│   ├── data_utils.py             # Manifest loading, sampling, and preprocessing
+│   └── part3_torch.py            # PyTorch training and block evaluation
 ├── scripts/
-│   ├── prepare_data.py         # 下载、导出、检查及划分图片
-│   └── minipq.py               # prepare_data.py 的 Parquet 读取辅助模块
+│   ├── prepare_data.py           # Download, decode, and split the dataset
+│   ├── minipq.py                 # Parquet reader used without pyarrow
+│   ├── verify_data.py            # Verify all images and dataset records
+│   └── validate_part2_numpy.py   # Small real-image NumPy validation
 ├── tests/
-│   ├── test_prepare_data.py    # 数据准备流程测试
-│   └── test_part3_torch.py     # PyTorch 实现的行为测试
-├── data/                      # 图片、划分清单、统计与抽查图
-└── results/                   # 本地实验结果，Git 已忽略
+│   ├── test_prepare_data.py
+│   ├── test_part2_numpy_cnn.py
+│   └── test_part3_torch.py
+├── raw/                         # Local downloads; ignored by Git
+├── data/                        # Local images and generated records; ignored
+└── results/                     # Local experiment outputs; ignored
 ```
 
-Python 实现只维护一份：模型放在 `src/`，数据准备及实验运行脚本放在
-`scripts/`，测试放在 `tests/`。原始 Parquet 文件下载到 `raw/`。
+Run the commands below from the repository root.
+Use English for repository documentation, code comments, and command-line messages.
 
-## Python environment
+## Environment
 
-Use a project-local virtual environment for every install and run:
+Use Python 3.12 in a virtual environment or an equivalent Conda environment.
+For a project-local virtual environment:
 
 ```bash
 python3 -m venv .venv
@@ -34,64 +44,109 @@ source .venv/bin/activate
 python -m pip install -r requirements-part1.txt
 ```
 
-## 运行
-
-以下命令在仓库根目录执行，并先激活 `.venv`。
+Install the optional download dependency before using `--download`:
 
 ```bash
-# Part I：运行全部三个示例
-python src/part1_mlp.py --output-dir results/part1
-
-# 数据准备测试：无需下载真实数据
-python tests/test_prepare_data.py
-
-# 下载并生成图片数据；下载功能还需要 huggingface_hub
-python scripts/prepare_data.py --download --raw raw --out data
-
-# 已有 Parquet 文件时
-python scripts/prepare_data.py --raw raw --out data
-
-# 可选：增加真实 Parquet 读取测试
-python tests/test_prepare_data.py --raw raw
+python -m pip install huggingface_hub
 ```
 
-数据准备要求输出目录为空；当前 `data/` 已有清单和统计，可以先使用
-`--out data_restored` 恢复到新目录。`--overwrite` 会删除并重建指定输出目录。
-当前仓库中的清单和统计不代表本地已包含全部图片。
+## Prepare local data
 
-## 分工
-
-| 成员 | 负责内容 |
-|---|---|
-| A | Part II：NumPy CNN、训练与测试、计时和实验结果 |
-| B | Part III：PyTorch CNN、CPU/GPU 设备管理、计时和实验结果 |
-| C | 数据恢复、共享数据工具、实验运行与性能比较 |
-
-当前已有 Part I、数据准备及 PyTorch CNN 代码。Part III 尚待队友执行测试和正式实验；
-NumPy CNN、共享数据工具及实验运行/比较脚本尚待实现。数据约定与结果 JSON 字段见
-[DATA.md](DATA.md)。
-
-## Part III (team member B): PyTorch CNN
-
-The dependency file targets Python 3.12, PyTorch 2.9.1, torchvision 0.24.1
-and CUDA 12.6 wheels from the [official version matrix](https://pytorch.org/get-started/previous-versions/#v291).
-Part III is currently an implementation handoff: the tests and real-data runs
-below still need to be executed by the teammate responsible for verification.
+Download the dataset specified in the handout and generate a reproducible,
+stratified 80/20 split:
 
 ```bash
-source .venv/bin/activate
+python scripts/prepare_data.py --download --raw raw --out data --seed 0 --test-frac 0.2
+```
+
+If the Parquet files are already available:
+
+```bash
+python scripts/prepare_data.py --raw raw --out data --seed 0 --test-frac 0.2
+```
+
+The output directory must be empty. For another local export, use an ignored
+path such as `--out data/restored`. `--overwrite` deletes and rebuilds the
+selected output directory.
+
+Each checkout prepares its own data using the same settings. Raw downloads,
+exported images, manifests, statistics, and preview images stay local and are
+excluded from Git. The reference full split contains 18,727 training images and
+4,682 test images, with fingerprint `5deb0f27f6c5`.
+
+Verify every exported image, the labels, counts, split, and preprocessing:
+
+```bash
+python scripts/verify_data.py --data-dir data --expected-fingerprint 5deb0f27f6c5
+```
+
+The verification report is saved to `results/data_verification.json`.
+Models use RGB images resized to 64x64 with bilinear interpolation and pixels
+scaled to [0, 1]. Labels are `cat = 0` and `dog = 1`.
+See [DATA.md](DATA.md) for the complete conventions.
+
+## Part I: NumPy MLP
+
+Run regression, binary classification, and multiclass classification:
+
+```bash
+python src/part1_mlp.py --output-dir results/part1
+```
+
+This writes loss histories, plots, predictions, and a summary CSV.
+Classification metrics in Part I are training accuracy.
+
+## Part II: NumPy CNN
+
+The network is:
+
+```text
+64x64x3 -> fixed 3x3x3 convolution -> ReLU -> 2x2 max pool
+        -> 961 features -> fully connected -> ReLU
+```
+
+Only the fully connected weights and bias are updated, using ordinary MSE and
+per-image SGD. Convolution and pooling use vectorized NumPy operations.
+The output is a nonnegative score; a score greater than 0.5 predicts dog.
+
+Run the synthetic forward-pass and single-update demonstration:
+
+```bash
+python src/part2_numpy_cnn.py
+```
+
+Run reproducible validation on 32 training images and 16 separate test images:
+
+```bash
+python scripts/validate_part2_numpy.py --data-dir data --epochs 20 --seed 3 --data-seed 0
+```
+
+The default learning rate is 0.001. Output files in `results/part2_validation/`
+include `validation.json`, `loss.csv`, `loss.png`, `test_predictions.csv`, and
+`run.log`. Each epoch's loss is the average MSE measured before each SGD update.
+The initial and final losses are evaluated on the entire training subset.
+
+Output ReLU can block gradients for some initializations. The validation loop
+detects an inactive positive class and reports the problem. The small-sample
+run checks computation and learning behavior; it is not a full benchmark.
+The formal NumPy experiment interface, block inference, timing, and final result
+JSON remain to be implemented.
+
+## Part III: PyTorch CNN
+
+Install the PyTorch dependencies and check CUDA availability:
+
+```bash
 python -m pip install -r requirements-part3.txt
 python -c 'import torch; print(torch.__version__, torch.cuda.is_available())'
-python -m unittest discover -s tests -p 'test_part3_torch.py' -v
 ```
 
-The tests use generated fixtures and require no downloaded dataset. For training,
-prepare `data/train/{cat,dog}`, `data/test/{cat,dog}`, `data/stats.json` and
-`data/split_manifest.csv` according to [DATA.md](DATA.md). The script rejects
-missing images or a mismatch between actual files and the recorded split.
-If the data was restored elsewhere, pass that directory with `--data-dir`.
+The network uses two convolution layers with ReLU and max pooling, followed by
+fully connected layers and output ReLU. Training uses MSE and Adam at 0.001.
+All convolution and fully connected parameters are trainable. Account for this
+architectural difference when comparing it with the fixed-filter NumPy model.
 
-First verify the pipeline using a reproducible subset of the real images:
+Start with a small real-image run:
 
 ```bash
 python src/part3_torch.py --device cuda --epochs 2 \
@@ -99,52 +154,35 @@ python src/part3_torch.py --device cuda --epochs 2 \
   --output results/part3_smoke_cuda.json
 ```
 
-Then run the full experiment:
+Run the full GPU experiment:
 
 ```bash
-set -o pipefail
-mkdir -p results
-python -u src/part3_torch.py --device cuda --epochs 10 \
-  --output results/part3_torch_cuda.json | tee results/part3_torch_cuda.log
+python src/part3_torch.py --device cuda --epochs 10 \
+  --output results/part3_torch_cuda.json
 ```
 
-Use `--device cpu` for CPU execution or omit the device flag for automatic device
-selection. An explicit `--device cuda` fails if CUDA is unavailable. Both the model
-and tensors run on the selected device.
+Use `--device cpu` for CPU execution, or omit the flag for automatic selection.
+Explicit CUDA execution fails if CUDA is unavailable. Default output filenames
+reflect the actual device; choose a CPU filename when overriding the output path
+for a CPU run. The script records total test time and
+model compute time, with CUDA synchronization around GPU measurements.
+It also saves a loss plot, epoch CSV, and checkpoint beside the result JSON.
+PyTorch runtime tests and formal GPU experiments have not been verified in
+this checkout.
 
-The model is `Conv(3,16) -> ReLU -> MaxPool -> Conv(16,32) -> ReLU -> MaxPool ->
-FC(8192,64) -> ReLU -> FC(64,1) -> ReLU`, trained with MSE and Adam at 0.001. The
-output layer starts with small weights and bias 0.5 to reduce inactive output
-ReLUs. All convolution and fully connected parameters are trainable. This differs
-from Part II's fixed convolution filter; comparisons must account for that.
+## Tests
 
-Images are RGB, resized to 64x64 with bilinear interpolation, and divided by 255.
-They are preloaded into CPU memory before timing (about 1.1 GiB for the full set).
-Training batches are shuffled; test order is fixed. Labels are float32 columns
-matching the `[N,1]` output. A prediction greater than 0.5 means dog.
-
-The result JSON follows DATA.md and includes the effective split fingerprint,
-source fingerprint, device, configuration, per-epoch loss/times, accuracy, test
-blocks of 1,000 images, and throughput. Subset runs have their own fingerprint.
-Training time spans all epochs and includes batching, transfers, forward/backward,
-Adam, metrics and epoch logging; it excludes disk decoding, optimizer setup,
-warmup and saving. Per-epoch times are also recorded separately.
-Test time includes batching, transfers, inference, metrics and synchronization.
-`test_compute_seconds` measures only forward calls, with CUDA synchronization.
-
-Alongside the result JSON, a directory with the same stem contains `epochs.csv`,
-`loss.png` and `model.pt` (model/optimizer state, configuration and label mapping).
-Reload the model with:
-
-```python
-import torch
-from src.part3_torch import CatDogCNN
-
-checkpoint = torch.load("results/part3_torch_cuda/model.pt", map_location="cpu", weights_only=True)
-model = CatDogCNN()
-model.load_state_dict(checkpoint["model_state_dict"])
-model.eval()
+```bash
+python tests/test_prepare_data.py
+python tests/test_prepare_data.py --raw raw
+python tests/test_part2_numpy_cnn.py
 ```
 
-Virtual environments, downloaded images, model weights and `results/` are ignored
-by Git, following the repository's current `.gitignore` settings.
+With the PyTorch dependencies installed:
+
+```bash
+python -m unittest discover -s tests -p 'test_part3_torch.py' -v
+```
+
+The NumPy checks cover reference convolution results, layer shapes, numerical
+gradients, reproducible SGD, inactive ReLU outputs, and a fixed convolution filter.

@@ -1,2 +1,0 @@
-source_file,source_row,label,error
-train-00000-of-00002.parquet,7223,0,ValueError: image too small (4x4)

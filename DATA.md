@@ -1,4 +1,4 @@
-# Data and Results Conventions (owned by C, followed by A and B)
+# Data and Results Conventions
 
 ## 1. Data source
 
@@ -8,10 +8,12 @@
   - `labels`: `0` = cat, `1` = dog
 - The dataset has no test split, so we make our own train/test split (see section 3)
 
-## 2. Building the data (C runs this once, then shares `data/` with A and B)
+## 2. Building local data
 
 Run commands from the repository root. Data preparation code lives in `scripts/`;
-`data/` contains images and generated records.
+`data/` contains images and generated records. Each checkout downloads and prepares its
+own data with the same seed and split settings. The entire `raw/` and `data/` directories
+are ignored by Git, including manifests, statistics and image previews.
 
 ```bash
 pip install pillow matplotlib huggingface_hub   # pyarrow optional; minipq.py is used without it
@@ -19,10 +21,11 @@ python scripts/prepare_data.py --download --raw raw --out data      # download +
 # Parquet files already downloaded:  python scripts/prepare_data.py --raw raw --out data
 # Tests without real data:          python tests/test_prepare_data.py
 # Include real Parquet reading:     python tests/test_prepare_data.py --raw raw
+# Verify all exported images:       python scripts/verify_data.py --data-dir data
 ```
 
 The output directory must be empty. If `data/` already contains records, use a new
-output directory such as `--out data_restored`, or explicitly rebuild it with
+output directory such as `--out data/restored`, or explicitly rebuild it with
 `--overwrite` (which deletes and recreates the selected output directory).
 
 What the script does:
@@ -47,7 +50,7 @@ Running again with the same `--seed` produces exactly the same split.
 | `data/stats.json` | Image counts per folder, split settings, and the **split fingerprint** `split_fingerprint` |
 | `data/sample_check.png` | 12 random images with their labels, for a visual label check |
 
-Image counts (actual run on 2026-10-16: 23,410 rows read, 23,409 images used, about 85 seconds):
+Reference full split (`--seed 0 --test-frac 0.2`): 23,410 rows read, 23,409 images used.
 
 | Folder | Images |
 |---|---|
@@ -63,7 +66,18 @@ The saved manifest has no train/test filename overlap, and its labels agree with
 class names. These records describe the earlier export; verify that the image files
 exist locally after restoring the data. `sample_check.png` is available for visual checks.
 
-## 4. Shared preprocessing rules (A and B must match)
+`scripts/verify_data.py` fully decodes every exported image, verifies RGB mode and
+original dimensions, checks manifest/folder counts, labels and split fingerprints,
+and checks 64x64 bilinear preprocessing for all four class/split folders.
+Its local report is `results/data_verification.json`.
+
+`src/data_utils.py` reads the generated records, selects balanced small subsets
+reproducibly, and loads RGB images as NHWC float32 arrays in [0, 1].
+Run `python scripts/validate_part2_numpy.py --data-dir data` for the NumPy small-sample
+validation; its outputs live in `results/part2_validation/` and are separate from
+the formal experiment JSON described below.
+
+## 4. Shared preprocessing rules
 
 | Item | Rule |
 |---|---|
@@ -76,14 +90,15 @@ exist locally after restoring the data. `sample_check.png` is available for visu
 The bilinear rule is easy to get wrong: PIL's `resize()` defaults to bicubic, while
 torchvision's `Resize` defaults to bilinear. Both model implementations must set bilinear explicitly:
 
-- A (NumPy): `Image.open(p).convert("RGB").resize((64, 64), Image.BILINEAR)`, then `/ 255.0`
-- B (PyTorch): `transforms.Resize((64, 64), interpolation=InterpolationMode.BILINEAR)` + `transforms.ToTensor()`
+- NumPy: `Image.open(p).convert("RGB").resize((64, 64), Image.Resampling.BILINEAR)`, then `/ 255.0`
+- PyTorch: `transforms.Resize((64, 64), interpolation=InterpolationMode.BILINEAR)` + `transforms.ToTensor()`
   (`ImageFolder` sorts folder names alphabetically, which gives `cat = 0`, `dog = 1`)
 
 ## 5. Results format
 
-Each run writes its results to a JSON file in `results/` (A: `part2_numpy_results.json`,
-B: `part3_torch_cuda.json`; CPU runs must use a CPU filename and device value). Required fields:
+Formal runs use JSON files in `results/`: `part2_numpy_results.json` for NumPy and
+`part3_torch_cuda.json` for PyTorch on CUDA. CPU runs must use a CPU filename and device
+value. The formal NumPy result writer is not implemented yet. Required fields:
 
 | Field | Meaning |
 |---|---|
@@ -103,15 +118,16 @@ Timing rules:
   `test_compute_seconds`
 - On the GPU, call `torch.cuda.synchronize()` before and after timing, or the times come out too low
 
-Planned integration tools (not yet implemented): C will add `scripts/run_experiments.py`
-to run both models and save logs, and `scripts/compare.py` to check the split fingerprint
+Planned integration tools (not yet implemented): `scripts/run_experiments.py`
+will run both models and save logs, and `scripts/compare.py` will check the split fingerprint
 and experiment settings and produce `results/comparison.md` and `results/comparison.png`
 for the report.
 
 ## 6. Keeping the comparison fair
 
-- Both models use the same `data/` folder (same fingerprint) and the same number of epochs
-- The NumPy version is slow (about 100 images/s; 10 epochs on the full set take about 35 minutes).
-  If A needs a subset, C builds one with `--max-per-class` (e.g. `data_small/`), and **both A and B
-  use that same subset**
+- Independently prepared copies must have the same split fingerprint; both models use
+  the same samples and number of epochs
+- Measure throughput on the actual implementation and hardware.
+  For a smaller dataset, agree on the same `--max-per-class` and `--seed` settings and
+  prepare it under an ignored directory (e.g. `data/small/`); **both models use the same subset**
 - State the CPU and GPU models in the report

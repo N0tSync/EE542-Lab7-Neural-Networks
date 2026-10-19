@@ -24,9 +24,7 @@ __pycache__/
 # Downloaded datasets and exported training/test images
 /raw/
 *.parquet
-/data/train/
-/data/test/
-/data/_staging/
+/data/
 
 # Model checkpoints
 *.pt

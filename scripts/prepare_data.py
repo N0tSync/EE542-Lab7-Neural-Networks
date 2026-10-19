@@ -26,7 +26,7 @@ Usage (from the repository root)
                                      huggingface_hub needed only for --download)
     python scripts/prepare_data.py --download --raw raw --out data
     python scripts/prepare_data.py --raw raw --out data      # parquet files already in raw/
-    python scripts/prepare_data.py --raw raw --out data_small --max-per-class 2000
+    python scripts/prepare_data.py --raw raw --out data/small --max-per-class 2000
 Re-running with the same --seed gives the identical split (same fingerprint in stats.json).
 """
 import argparse
