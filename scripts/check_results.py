@@ -17,7 +17,7 @@ import lab7_common as lc
 
 def main():
     paths = sys.argv[1:] or sorted(glob.glob("results/*.json"))
-    paths = [p for p in paths if not p.endswith("summary.json")
+    paths = [p for p in paths if os.path.basename(p) not in {"summary.json", "data_verification.json"}
              and not os.path.basename(p).startswith("part1_")     # Part I file is not a CNN run
              and "smoke" not in os.path.basename(p)]              # quick smoke runs
     if not paths:

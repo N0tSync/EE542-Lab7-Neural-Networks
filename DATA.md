@@ -145,12 +145,13 @@ Companion artifacts are `part2_numpy_loss.png`, `part2_numpy_run.log`,
 `part2_numpy_epochs.csv`, `part2_numpy_test_predictions.csv`, and
 `part2_numpy_model.npz`. Subset runs default to `results/part2_smoke/` so that
 they do not overwrite the default full-run result path. All outputs remain local
-and are ignored by Git. Full-dataset benchmarking is a separate next step.
+and are ignored by Git.
 
-Planned integration tools (not yet implemented): `scripts/run_experiments.py`
-will run both models and save logs, and `scripts/compare.py` will check the split fingerprint
-and experiment settings and produce `results/comparison.md` and `results/comparison.png`
-for the report.
+Integration tools: `scripts/run_experiments.py` runs both models sequentially and
+saves logs. `scripts/check_results.py` validates model result schemas and split
+fingerprints. `scripts/compare.py` produces `results/comparison.md`,
+`results/comparison.csv`, `results/comparison.png`, and `results/summary.json`.
+Dataset verification reports are excluded from model result discovery.
 
 ## 6. Keeping the comparison fair
 

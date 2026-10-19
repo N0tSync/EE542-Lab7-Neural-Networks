@@ -15,17 +15,23 @@ and a PyTorch CNN with CPU/GPU execution.
 │   ├── part1_mlp.py              # Three MLP examples
 │   ├── part2_numpy_cnn.py        # NumPy training, block evaluation, and timing
 │   ├── data_utils.py             # Manifest loading, sampling, and preprocessing
-│   └── part3_torch.py            # PyTorch training and block evaluation
+│   ├── part3_torch.py            # PyTorch training and block evaluation
+│   └── lab7_common.py            # Shared timing and result validation tools
 ├── scripts/
 │   ├── prepare_data.py           # Download, decode, and split the dataset
 │   ├── minipq.py                 # Parquet reader used without pyarrow
 │   ├── verify_data.py            # Verify all images and dataset records
-│   └── validate_part2_numpy.py   # Small real-image NumPy validation
+│   ├── validate_part2_numpy.py   # Small real-image NumPy validation
+│   ├── run_experiments.py       # Sequential model runs and comparison
+│   ├── check_results.py         # Result schema and split checks
+│   ├── compare.py               # Tables, charts, and throughput comparison
+│   └── pipeline_check.py        # Lightweight shared-pipeline check
 ├── tests/
 │   ├── test_prepare_data.py
 │   ├── test_part2_numpy_cnn.py
 │   ├── test_part2_experiment.py
-│   └── test_part3_torch.py
+│   ├── test_part3_torch.py
+│   └── test_results_pipeline.py
 ├── raw/                         # Local downloads; ignored by Git
 ├── data/                        # Local images and generated records; ignored
 └── results/                     # Local experiment outputs; ignored
@@ -150,9 +156,8 @@ python src/part2_numpy_cnn.py --data-dir data --epochs 10 --lr 0.001 --seed 3 \
   --test-block-size 1000 --inference-batch-size 64 --output-dir results
 ```
 
-The full experiment interface is implemented; a formal full-dataset run has not
-been performed in this checkout. `--max-train-per-class 0` and
-`--max-test-per-class 0` use the complete training and test splits.
+Set `--max-train-per-class 0` and `--max-test-per-class 0` to use the complete
+training and test splits; these are the defaults.
 `--output` accepts a JSON filename instead of an output directory.
 
 The output directory contains:
@@ -175,6 +180,16 @@ also recorded. Disk decoding and result export are excluded from these timers.
 `--test-block-size` controls reporting blocks; `--inference-batch-size` bounds
 the images processed in one forward call. Overall accuracy is computed from
 total correct predictions, including the final partial block.
+
+Validate generated model results and build the available comparison:
+
+```bash
+python scripts/check_results.py
+python scripts/compare.py
+```
+
+The comparison uses the result files currently available. GPU speedups require
+a real PyTorch GPU result with the same data split and compatible settings.
 
 ## Part III: PyTorch CNN
 
@@ -221,6 +236,7 @@ python tests/test_prepare_data.py
 python tests/test_prepare_data.py --raw raw
 python tests/test_part2_numpy_cnn.py
 python tests/test_part2_experiment.py
+python tests/test_results_pipeline.py
 ```
 
 With the PyTorch dependencies installed:

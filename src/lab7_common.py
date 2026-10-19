@@ -1,16 +1,16 @@
 """
-Lab 7 - shared code for Part II (A, NumPy) and Part III (C, PyTorch). Maintained by C (data and shared tools).
+Lab 7 - shared data, timing and result tools for NumPy and PyTorch experiments.
 
 Everything here follows DATA.md, so both models load images the same way and write
 results in the same format. Nothing here needs PyTorch unless you call torch_transform().
 
     import lab7_common as lc
 
-    # --- loading (A, NumPy) ---
+    # --- NumPy loading ---
     X_train, y_train = lc.load_arrays("data", "train")          # float32 (N,64,64,3) in [0,1], labels 0/1
     X_test,  y_test  = lc.load_arrays("data", "test")
 
-    # --- loading (C, PyTorch) ---
+    # --- PyTorch loading ---
     from torchvision import datasets
     train_set = datasets.ImageFolder("data/train", transform=lc.torch_transform())
 

@@ -63,7 +63,8 @@ def main():
         if name == "check_results":
             cmd = [py, "scripts/check_results.py"] + sorted(
                 os.path.join(args.out, f) for f in os.listdir(ROOT / args.out)
-                if f.endswith(".json") and f != "summary.json" and not f.startswith("part1_"))
+                if f.endswith(".json") and f not in {"summary.json", "data_verification.json"}
+                and not f.startswith("part1_"))
         if step(name, cmd, log_dir) != 0:
             sys.exit(f"\nstopped: step '{name}' failed (see logs/run_{name}.log)")
     print("\nAll steps finished.")

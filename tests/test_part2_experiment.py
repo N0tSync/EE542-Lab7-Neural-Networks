@@ -173,6 +173,8 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(full.output, Path("results/part2_numpy_results.json"))
         self.assertEqual(smoke.output, Path("results/part2_smoke/part2_numpy_results.json"))
         self.assertEqual(full.data_seed, full.seed)
+        alias = parse_args(["--data", "data", "--out", "results/check"])
+        self.assertEqual(alias.output, Path("results/check/part2_numpy_results.json"))
 
 
 if __name__ == "__main__":

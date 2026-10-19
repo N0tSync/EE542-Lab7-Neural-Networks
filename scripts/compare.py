@@ -28,7 +28,7 @@ def load_runs(results_dir):
     runs = []
     for path in sorted(glob.glob(os.path.join(results_dir, "*.json"))):
         name = os.path.basename(path)
-        if name == "summary.json" or name.startswith("part1_") or "smoke" in name:
+        if name in {"summary.json", "data_verification.json"} or name.startswith("part1_") or "smoke" in name:
             continue                       # summary output, Part I file and quick smoke runs are skipped
         with open(path) as f:
             r = json.load(f)

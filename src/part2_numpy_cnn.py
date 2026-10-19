@@ -365,7 +365,14 @@ def run_experiment(args):
             architecture="64x64x3 -> fixed conv3 -> ReLU -> pool2 -> 961 -> FC1 -> ReLU",
             trainable_parameters=962, frozen_parameters=27,
             convolution_filter_fixed=True, numpy_version=np.__version__,
-            python_version=platform.python_version(), platform=platform.platform())
+            python_version=platform.python_version(), platform=platform.platform(),
+            machine=f"{platform.platform()} / Python {platform.python_version()}",
+            config=dict(epochs=args.epochs, lr=args.lr, seed=args.seed, data_seed=args.data_seed,
+                        batch_size=1, test_block_size=args.test_block_size,
+                        inference_batch_size=args.inference_batch_size,
+                        max_train_per_class=args.max_train_per_class,
+                        max_test_per_class=args.max_test_per_class,
+                        trained_layers="fully connected only", convolution="NumPy vectorized einsum"))
         checkpoint = output.with_name(f"{prefix}_model.npz")
         np.savez(checkpoint, conv_filter=model.conv_filter, W_fc=model.W_fc, b_fc=model.b_fc)
         result["checkpoint"] = str(checkpoint)
@@ -444,7 +451,8 @@ def parse_args(argv=None):
     parser.add_argument("--max-train-per-class", type=int, default=0, help="0 uses all training images")
     parser.add_argument("--max-test-per-class", type=int, default=0, help="0 uses all test images")
     outputs = parser.add_mutually_exclusive_group()
-    outputs.add_argument("--output-dir", type=Path, help="directory for results and companion artifacts")
+    outputs.add_argument("--output-dir", "--out", type=Path,
+                         help="directory for results and companion artifacts")
     outputs.add_argument("--output", type=Path, help="explicit result JSON path")
     args = parser.parse_args(argv)
     if min(args.epochs, args.test_block_size, args.inference_batch_size) < 1:

@@ -127,6 +127,17 @@ def main():
               and runs3[1]["device"] == "cuda (NVIDIA Test GPU)" and runs3[1]["is_gpu"],
               f"problems {lc.validate_results(part3)}, runs {[r['file'] for r in runs3]}")
 
+        # Dataset verification is metadata, not a model run.
+        metadata = os.path.join(res, "data_verification.json")
+        with open(metadata, "w") as f:
+            json.dump({"passed": True, "images_verified": 12}, f)
+        p = subprocess.run([sys.executable, os.path.join(SCRIPTS, "check_results.py")],
+                           capture_output=True, text=True, cwd=tmp)
+        # The default command expects the conventional results/ directory.
+        check("5c. data verification reports are excluded from model result checks",
+              p.returncode == 0 and len(mr.load_runs(res)) == 2,
+              p.stdout.strip().splitlines()[-1] if p.stdout.strip() else p.stderr.strip())
+
         # 6. different splits are flagged by check_results.py
         other = os.path.join(tmp, "results_mixed")
         shutil.copytree(res, other)
