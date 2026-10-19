@@ -13,7 +13,7 @@ and a PyTorch CNN with CPU/GPU execution.
 ├── requirements-part3.txt       # PyTorch and torchvision dependencies
 ├── src/
 │   ├── part1_mlp.py              # Three MLP examples
-│   ├── part2_numpy_cnn.py        # CNN forward pass, MSE, and FC-only SGD
+│   ├── part2_numpy_cnn.py        # NumPy training, block evaluation, and timing
 │   ├── data_utils.py             # Manifest loading, sampling, and preprocessing
 │   └── part3_torch.py            # PyTorch training and block evaluation
 ├── scripts/
@@ -24,6 +24,7 @@ and a PyTorch CNN with CPU/GPU execution.
 ├── tests/
 │   ├── test_prepare_data.py
 │   ├── test_part2_numpy_cnn.py
+│   ├── test_part2_experiment.py
 │   └── test_part3_torch.py
 ├── raw/                         # Local downloads; ignored by Git
 ├── data/                        # Local images and generated records; ignored
@@ -112,7 +113,7 @@ The output is a nonnegative score; a score greater than 0.5 predicts dog.
 Run the synthetic forward-pass and single-update demonstration:
 
 ```bash
-python src/part2_numpy_cnn.py
+python src/part2_numpy_cnn.py --demo
 ```
 
 Run reproducible validation on 32 training images and 16 separate test images:
@@ -129,8 +130,51 @@ The initial and final losses are evaluated on the entire training subset.
 Output ReLU can block gradients for some initializations. The validation loop
 detects an inactive positive class and reports the problem. The small-sample
 run checks computation and learning behavior; it is not a full benchmark.
-The formal NumPy experiment interface, block inference, timing, and final result
-JSON remain to be implemented.
+
+Run the experiment interface on a small reproducible subset:
+
+```bash
+python src/part2_numpy_cnn.py --data-dir data --epochs 2 --seed 3 \
+  --max-train-per-class 16 --max-test-per-class 8 \
+  --test-block-size 7 --inference-batch-size 4
+```
+
+Subset runs default to `results/part2_smoke/`. Their result JSON records the
+effective subset fingerprint separately from the original dataset fingerprint.
+The sampling seed defaults to `--seed`; use `--data-seed` to override it.
+
+For a full experiment:
+
+```bash
+python src/part2_numpy_cnn.py --data-dir data --epochs 10 --lr 0.001 --seed 3 \
+  --test-block-size 1000 --inference-batch-size 64 --output-dir results
+```
+
+The full experiment interface is implemented; a formal full-dataset run has not
+been performed in this checkout. `--max-train-per-class 0` and
+`--max-test-per-class 0` use the complete training and test splits.
+`--output` accepts a JSON filename instead of an output directory.
+
+The output directory contains:
+
+```text
+part2_numpy_results.json
+part2_numpy_loss.png
+part2_numpy_run.log
+part2_numpy_epochs.csv
+part2_numpy_test_predictions.csv
+part2_numpy_model.npz
+```
+
+Images are preloaded as uint8 arrays before timing, using about 274 MiB for the
+full dataset. Normalization is performed per training image and per inference
+batch, so no full float64 image array is allocated. Training includes shuffle,
+normalization, convolution, FC gradients, updates, metrics, and epoch logging.
+Test time includes normalization, inference, and metrics; forward-only time is
+also recorded. Disk decoding and result export are excluded from these timers.
+`--test-block-size` controls reporting blocks; `--inference-batch-size` bounds
+the images processed in one forward call. Overall accuracy is computed from
+total correct predictions, including the final partial block.
 
 ## Part III: PyTorch CNN
 
@@ -176,6 +220,7 @@ this checkout.
 python tests/test_prepare_data.py
 python tests/test_prepare_data.py --raw raw
 python tests/test_part2_numpy_cnn.py
+python tests/test_part2_experiment.py
 ```
 
 With the PyTorch dependencies installed:
@@ -186,3 +231,5 @@ python -m unittest discover -s tests -p 'test_part3_torch.py' -v
 
 The NumPy checks cover reference convolution results, layer shapes, numerical
 gradients, reproducible SGD, inactive ReLU outputs, and a fixed convolution filter.
+Experiment checks cover uint8 normalization, partial blocks, weighted accuracy,
+manifest validation, and CLI artifacts using temporary image fixtures.

@@ -98,7 +98,7 @@ torchvision's `Resize` defaults to bilinear. Both model implementations must set
 
 Formal runs use JSON files in `results/`: `part2_numpy_results.json` for NumPy and
 `part3_torch_cuda.json` for PyTorch on CUDA. CPU runs must use a CPU filename and device
-value. The formal NumPy result writer is not implemented yet. Required fields:
+value. The NumPy experiment interface writes the following required fields:
 
 | Field | Meaning |
 |---|---|
@@ -117,6 +117,35 @@ Timing rules:
 - Test time: inference over all test blocks; the GPU version also records pure model compute time
   `test_compute_seconds`
 - On the GPU, call `torch.cuda.synchronize()` before and after timing, or the times come out too low
+
+NumPy experiment entry point:
+
+```bash
+python src/part2_numpy_cnn.py --data-dir data --epochs 10 --lr 0.001 --seed 3 \
+  --test-block-size 1000 --inference-batch-size 64 --output-dir results
+```
+
+The NumPy loader validates filenames, counts, labels and the source fingerprint
+before preloading the selected images as uint8. Training normalizes one image
+at a time; test blocks are divided into bounded inference batches. The effective
+selection fingerprint is written to `data_split_fingerprint`, and the original
+full split is preserved in `source_data_split_fingerprint`. Match both the sample
+selection seed (`--data-seed`, defaulting to `--seed`) and per-class subset limits
+when comparing subset runs. Zero per-class limits use the full original splits.
+
+The JSON also records CPU information, per-block MSE and correct counts, class
+prediction counts, a confusion matrix, forward-only test time and image storage
+size. Epoch training accuracy and MSE are online values measured before each
+sample update. Training throughput uses `n_train * epochs / train_seconds`;
+test throughput uses `n_test / test_seconds`. Overall test accuracy uses total
+correct predictions divided by `n_test`, rather than averaging block accuracies.
+Training total time includes epoch logging; per-epoch timers exclude logging.
+
+Companion artifacts are `part2_numpy_loss.png`, `part2_numpy_run.log`,
+`part2_numpy_epochs.csv`, `part2_numpy_test_predictions.csv`, and
+`part2_numpy_model.npz`. Subset runs default to `results/part2_smoke/` so that
+they do not overwrite the default full-run result path. All outputs remain local
+and are ignored by Git. Full-dataset benchmarking is a separate next step.
 
 Planned integration tools (not yet implemented): `scripts/run_experiments.py`
 will run both models and save logs, and `scripts/compare.py` will check the split fingerprint
