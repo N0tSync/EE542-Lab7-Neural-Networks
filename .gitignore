@@ -1,3 +1,36 @@
-
+# Operating system and editor files
 .DS_Store
+Thumbs.db
+*:Zone.Identifier
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local PDF documents
+*.pdf
+
+# Local Python environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Downloaded datasets and exported training/test images
+/raw/
+*.parquet
+/data/train/
+/data/test/
+/data/_staging/
+
+# Model checkpoints
+*.pt
+*.pth
+
+# Local experiment results (existing rule)
 /results/
