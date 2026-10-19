@@ -103,7 +103,7 @@ def main():
         found = mr.findings(runs, base)
         check("5. comparison: NumPy is the baseline, GPU speed-up 100x, findings match",
               base["model"] == "NumPy CNN" and rows[1]["Train speed-up"] == "100.0x"
-              and any("100.0x faster" in f for f in found) and any("All 2 runs used the data split" in f for f in found),
+              and any("100.0x faster" in f for f in found) and any("Both runs used the data split" in f for f in found),
               f"speed-up {rows[1]['Train speed-up']}")
 
         # 5b. Part III's own result format (src/part3_torch.py) is accepted by the tools

@@ -59,6 +59,26 @@ def fmt_time(s):
     return f"{s:.2f} s"
 
 
+def trained_params(r):
+    """Number of trained parameters, from either result format (None if not recorded)."""
+    for key in ("trainable_parameters", "parameter_count"):
+        if isinstance(r.get(key), int):
+            return r[key]
+    return None
+
+
+def machine(r):
+    if r.get("machine"):
+        return r["machine"]
+    env = r.get("environment") or {}                     # src/part3_torch.py records it here
+    if env.get("platform"):
+        return env["platform"] + (f" / Python {env['python']}" if env.get("python") else "")
+    return "-"
+
+
+SKIP_SETTINGS = {"epochs", "seed", "output", "data_dir", "device"}   # shown elsewhere or not a setting
+
+
 def build(runs):
     base = next((r for r in runs if r["is_numpy"]), runs[0])
     rows = []
@@ -70,16 +90,19 @@ def build(runs):
             "Train img/s": f"{r['train_images_per_sec']:,.0f}",
             "Test time": fmt_time(r["test_seconds"]),
             "Test ms/img": f"{1000*r['test_seconds']/r['n_test']:.3f}",
+            "Compute ms/img": (f"{1000*r['test_compute_seconds']/r['n_test']:.3f}"
+                               if r.get("test_compute_seconds") else "-"),
             "Train speed-up": f"{r['train_images_per_sec']/base['train_images_per_sec']:,.1f}x",
             "Test speed-up": f"{r['test_images_per_sec']/base['test_images_per_sec']:,.1f}x",
             "Test accuracy": f"{100*r['test_accuracy']:.2f}%",
         })
     config_rows = [{
-        "Model": r["model"], "Device": r["device"], "Machine": r.get("machine", ""),
+        "Model": r["model"], "Device": r["device"], "Machine": machine(r),
+        "Trained parameters": f"{trained_params(r):,}" if trained_params(r) else "-",
         "Split fingerprint": r["data_split_fingerprint"], "Seed": r["seed"],
         "Image size": f"{r['image_size']}x{r['image_size']}",
         "Other settings": ", ".join(f"{k}={v}" for k, v in sorted((r.get("config") or {}).items())
-                                    if k not in ("epochs", "seed")) or "-",
+                                    if k not in SKIP_SETTINGS) or "-",
     } for r in runs]
     return base, rows, config_rows
 
@@ -95,7 +118,8 @@ def findings(runs, base):
     """Plain-language findings computed from the numbers, so the report's conclusions match the data."""
     lines = []
     fps = {r["data_split_fingerprint"] for r in runs}
-    lines.append((f"All {len(runs)} runs used" if len(runs) > 1 else "The run used") +
+    lines.append(("Both runs used" if len(runs) == 2 else f"All {len(runs)} runs used" if len(runs) > 2
+                  else "The run used") +
                  f" the data split with fingerprint `{fps.pop()}`."
                  if len(fps) == 1 else
                  "WARNING: the runs used different data splits, so they are not directly comparable.")
@@ -116,6 +140,15 @@ def findings(runs, base):
             f"and tests {te:,.1f}x {'faster' if te >= 1 else 'slower'} per image than {base['model']}, "
             f"with test accuracy {100*r['test_accuracy']:.2f}% vs {100*base['test_accuracy']:.2f}% "
             f"({'+' if d >= 0 else ''}{d:.2f} percentage points).")
+        if r.get("test_compute_seconds") and base.get("test_compute_seconds"):
+            cs = base["test_compute_seconds"] / r["test_compute_seconds"]
+            lines.append(f"Counting only model computation (no batching or metrics), {r['model']} tests "
+                         f"{cs:,.1f}x faster than {base['model']}.")
+        pr, pb = trained_params(r), trained_params(base)
+        if pr and pb and pr != pb:
+            lines.append(f"The models are not the same network: {r['model']} trains {pr:,} parameters and "
+                         f"{base['model']} {pb:,}, so the speed-up reflects both the hardware/framework and the "
+                         "different amount of work per image, and the accuracy gap mainly reflects the model.")
     for r in runs:
         if abs(r["test_accuracy"] - 0.5) < 0.03:
             lines.append(f"{r['model']} ({100*r['test_accuracy']:.2f}%) is close to chance level (50%).")
@@ -174,7 +207,8 @@ def main():
     md = ["# NumPy vs. PyTorch comparison", "",
           "## Results", "", md_table(rows), "",
           f"Speed-ups are relative to {base['model']} ({base['device']}). "
-          "Test time is per image over the whole test set.", "",
+          "`Test time` is the total for all test images; `Test ms/img` is the per-image average; "
+          "`Compute ms/img` counts only the model's forward pass.", "",
           "## Run configuration", "", md_table(config_rows), "",
           "## Findings", ""] + [f"- {x}" for x in found]
     with open(os.path.join(args.results, "comparison.md"), "w") as f:
